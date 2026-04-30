@@ -1,1 +1,1 @@
-# hubavatr
+# avatr-hub
