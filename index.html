@@ -324,24 +324,44 @@
 
 <audio id="audioPlayer" preload="none"></audio>
 
+<div id="autoplayOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(8,8,14,0.88); backdrop-filter:blur(12px); flex-direction:column; align-items:center; justify-content:center; gap:24px;">
+  <img id="autoplayLogo" src="" style="width:100px; height:100px; border-radius:22px; object-fit:cover; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+  <div id="autoplayName" style="font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:700; color:#fff; letter-spacing:-0.02em;"></div>
+  <button id="autoplayBtn" style="background:linear-gradient(135deg,#00c8ff,#7b2ff7); border:none; border-radius:100px; padding:16px 40px; font-size:1.1rem; font-weight:600; color:white; cursor:pointer; box-shadow:0 4px 24px rgba(0,200,255,0.4); font-family:sans-serif;">
+    ▶ Tocar agora
+  </button>
+</div>
+
 <script>
-// Auto-play radio from URL parameter ?radio=id
+const RADIO_MAP = {
+  itapema: { name:'Itapema FM',     search:'itapema',                     id:'itapema' },
+  jpfm:    { name:'Jovem Pan FM',   search:'jovem pan fm florianopolis',  id:'jpfm'    },
+  jpnews:  { name:'Jovem Pan News', search:'jovem pan news florianopolis',id:'jpnews'  },
+  magia:   { name:'Magia FM 107.3', search:'magia 107.3 florianopolis',   id:'magia'   }
+};
+
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const radioId = params.get('radio');
-  if (!radioId) return;
+  if (!radioId || !RADIO_MAP[radioId]) return;
 
-  const map = {
-    itapema: { name:'Itapema FM',     search:'itapema', id:'itapema' },
-    jpfm:    { name:'Jovem Pan FM',   search:'jovem pan fm florianopolis', id:'jpfm' },
-    jpnews:  { name:'Jovem Pan News', search:'jovem pan news florianopolis', id:'jpnews' },
-    magia:   { name:'Magia FM 107.3', search:'magia 107.3 florianopolis', id:'magia' }
-  };
+  const radio = RADIO_MAP[radioId];
+  const overlay = document.getElementById('autoplayOverlay');
+  const logo    = document.getElementById('autoplayLogo');
+  const name    = document.getElementById('autoplayName');
+  const btn     = document.getElementById('autoplayBtn');
 
-  const radio = map[radioId];
-  if (radio) {
-    setTimeout(() => playRadio(radio.search, radio.name, radio.id), 500);
-  }
+  // Set logo from the card image on the page
+  const cardImg = document.querySelector('#card-' + radio.id + ' img');
+  if (cardImg) logo.src = cardImg.src;
+
+  name.textContent = radio.name;
+  overlay.style.display = 'flex';
+
+  btn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+    playRadio(radio.search, radio.name, radio.id);
+  });
 });
 </script>
 
