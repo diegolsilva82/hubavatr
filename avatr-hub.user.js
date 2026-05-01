@@ -4,6 +4,7 @@
 // @version      6.0
 // @description  Barra flutuante de navegação rápida (CSP safe)
 // @match        *://www.youtube.com/*
+// @match        *://m.youtube.com/*
 // @match        *://music.youtube.com/*
 // @match        *://www.itapema.com.br/*
 // @match        *://www.jovempan.com.br/*
@@ -53,6 +54,7 @@
   function getActiveId() {
     const h = location.hostname;
     if (h === 'music.youtube.com')        return 'ytmusic';
+    if (h === 'm.youtube.com')             return 'youtube';
     if (h.includes('youtube.com'))        return 'youtube';
     if (h.includes('itapema.com.br'))     return 'itapema';
     if (h.includes('jovempan.com.br'))    return 'jpfm';
