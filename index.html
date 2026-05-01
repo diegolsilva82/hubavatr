@@ -109,6 +109,27 @@
   input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:#00c8ff; cursor:pointer; }
 
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+  /* Minimize button */
+  .btn-minimize {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: background 0.2s;
+  }
+  .btn-minimize:active { background: rgba(255,255,255,0.2); }
+  .btn-minimize svg { fill: rgba(255,255,255,0.6); }
 </style>
 </head>
 <body>
@@ -317,6 +338,29 @@ window.addEventListener('load', () => {
     playRadio(radio.search, radio.name, radio.id);
   });
 });
+</script>
+
+<!-- Minimize button -->
+<div class="btn-minimize" onclick="minimizeApp()" title="Minimizar">
+  <svg width="24" height="24" viewBox="0 0 24 24">
+    <path d="M19 13H5v-2h14v2z"/>
+  </svg>
+</div>
+
+<script>
+function minimizeApp() {
+  // Try Android back action first
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    // Simulate home button via blur
+    window.blur();
+    // Android intent to go home
+    try {
+      location.href = 'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;end';
+    } catch(e) {}
+  }
+}
 </script>
 </body>
 </html>
