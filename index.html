@@ -211,12 +211,14 @@
 // AUTO SCALE to fit screen height
 function applyScale() {
   const scaler = document.getElementById('scaler');
+  scaler.style.transform = 'scale(1)';
+  scaler.style.marginTop = '0';
   const naturalH = scaler.scrollHeight;
   const availH = window.innerHeight;
   const availW = window.innerWidth;
   const scaleH = availH / naturalH;
   const scaleW = availW / 900;
-  const scale = Math.min(scaleH, scaleW, 1); // never upscale
+  const scale = Math.min(scaleH, scaleW, 1);
   scaler.style.transform = 'scale(' + scale + ')';
   scaler.style.marginTop = scale < 1 ? -((naturalH * (1 - scale)) / 2) + 'px' : '0';
 }
@@ -253,6 +255,8 @@ function showPlayer(id, name) {
   if (cardImg) document.getElementById('playerLogo').src = cardImg.src;
   document.getElementById('playerName').textContent = name;
   document.getElementById('playerSection').classList.add('visible');
+  // Hide header to free up space for player
+  document.querySelector('header').style.display = 'none';
   setTimeout(applyScale, 50);
 }
 
