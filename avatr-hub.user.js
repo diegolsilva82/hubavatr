@@ -3,7 +3,13 @@
 // @namespace    avatr-hub
 // @version      7.0
 // @description  Barra flutuante em todas as paginas (CSP safe)
-// @match        *://*/*
+// @match        *://www.youtube.com/*
+// @match        *://m.youtube.com/*
+// @match        *://music.youtube.com/*
+// @match        *://www.itapema.com.br/*
+// @match        *://www.jovempan.com.br/*
+// @match        *://www.magiaonline.com.br/*
+// @match        *://www.radios.com.br/*
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
@@ -43,8 +49,6 @@
   }
 
   const SERVICES = [
-    { id:'home',    label:'AVATR HUB',     url:HUB_URL,                                 type:'svg', makeSvg:makeHomeSvg, bg:'linear-gradient(135deg,#00c8ff,#7b2ff7)' },
-    { id:'sep' },
     { id:'youtube', label:'YouTube',        url:'https://www.youtube.com',               type:'svg', makeSvg:makeYTSvg,   bg:'linear-gradient(135deg,#ff0000,#cc0000)' },
     { id:'ytmusic', label:'YouTube Music',  url:'https://music.youtube.com',             type:'svg', makeSvg:makeYTMSvg,  bg:'linear-gradient(135deg,#ff4444,#e91e1e)' },
     { id:'sep2' },
@@ -66,7 +70,6 @@
     if (h.includes('jovempan.com.br'))           return 'jpfm';
     if (h.includes('magiaonline.com.br'))        return 'magia';
     if (h.includes('radios.com.br'))             return 'radios';
-    if (h.includes('diegolsilva82.github.io'))   return 'home';
     return null;
   }
 
@@ -85,7 +88,7 @@
     bar.className = 'bar';
 
     SERVICES.forEach(s => {
-      if (s.id === 'sep' || s.id === 'sep2' || s.id === 'sep3') {
+      if (s.id === 'sep' || s.id === 'sep2') {
         const sep = document.createElement('div');
         sep.className = 'sep';
         bar.appendChild(sep);
