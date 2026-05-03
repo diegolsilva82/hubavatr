@@ -104,8 +104,21 @@
     const root = document.documentElement || document.body;
     if (!root) return;
     root.appendChild(buildBar());
-    const nudge = () => { if (document.body) document.body.style.setProperty('margin-top','56px','important'); };
-    nudge(); setTimeout(nudge,500); setTimeout(nudge,1500);
+    const nudge = () => {
+      if (!document.body) return;
+      document.body.style.setProperty('margin-top','56px','important');
+      document.body.style.setProperty('padding-top','0','important');
+      // YouTube Music specific
+      const ytmApp = document.querySelector('ytmusic-app');
+      if (ytmApp) ytmApp.style.setProperty('margin-top','56px','important');
+      // YouTube specific
+      const ytApp = document.querySelector('ytd-app');
+      if (ytApp) ytApp.style.setProperty('margin-top','56px','important');
+      // Generic header push
+      const header = document.querySelector('header, #header, .header, [role="banner"]');
+      if (header) header.style.setProperty('margin-top','56px','important');
+    };
+    nudge(); setTimeout(nudge,300); setTimeout(nudge,800); setTimeout(nudge,2000);
   }
 
   let watching = false;
