@@ -67,10 +67,10 @@
     const activeId = getActiveId();
     const host = document.createElement('div');
     host.id = BAR_ID;
-    host.setAttribute('style','all:initial;position:fixed;bottom:0;left:0;width:100%;height:56px;z-index:2147483647;display:block;pointer-events:auto');
+    host.setAttribute('style','all:initial;position:fixed;top:0;right:0;width:56px;height:100%;z-index:2147483647;display:block;pointer-events:auto');
     const shadow = host.attachShadow({ mode:'open' });
     const styleEl = document.createElement('style');
-    styleEl.textContent = '.bar{position:fixed;bottom:0;left:0;right:0;height:56px;z-index:2147483647;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 16px;background:rgba(8,8,14,0.96);border-top:1px solid rgba(255,255,255,0.12);box-shadow:0 -2px 24px rgba(0,0,0,0.7);}.btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;opacity:1;box-sizing:border-box;}.btn.active{outline:2px solid rgba(255,255,255,0.55);outline-offset:2px;}.btn img{width:34px;height:34px;border-radius:8px;object-fit:cover;display:block;}.sep{width:1px;height:28px;background:rgba(255,255,255,0.18);flex-shrink:0;border-radius:1px;}';
+    styleEl.textContent = '.bar{position:fixed;top:0;right:0;bottom:0;width:56px;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px 0;background:rgba(8,8,14,0.96);border-left:1px solid rgba(255,255,255,0.12);box-shadow:-2px 0 24px rgba(0,0,0,0.7);}.btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;opacity:1;box-sizing:border-box;}.btn.active{outline:2px solid rgba(255,255,255,0.55);outline-offset:2px;}.btn img{width:34px;height:34px;border-radius:8px;object-fit:cover;display:block;}.sep{height:1px;width:28px;background:rgba(255,255,255,0.18);flex-shrink:0;border-radius:1px;}';
     shadow.appendChild(styleEl);
     const bar = document.createElement('div');
     bar.className = 'bar';
@@ -106,7 +106,7 @@
     root.appendChild(buildBar());
     const nudge = () => {
       if (!document.body) return;
-      document.body.style.setProperty('margin-bottom','56px','important');
+      document.body.style.setProperty('margin-right','56px','important');
     };
     nudge(); setTimeout(nudge,500); setTimeout(nudge,1500);
   }
