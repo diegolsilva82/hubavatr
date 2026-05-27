@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AVATR HUB</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0f">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -130,6 +134,25 @@
   }
   .btn-minimize:active { background: rgba(255,255,255,0.2); }
   .btn-minimize svg { fill: rgba(255,255,255,0.6); }
+  .btn-fullscreen {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: background 0.2s;
+  }
+  .btn-fullscreen:active { background: rgba(255,255,255,0.2); }
+  .btn-fullscreen svg { fill: rgba(255,255,255,0.6); }
 </style>
 </head>
 <body>
@@ -361,6 +384,25 @@ function minimizeApp() {
     } catch(e) {}
   }
 }
+</script>
+<div class="btn-fullscreen" onclick="enterFullscreen()" title="Tela cheia">
+  <svg width="20" height="20" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+</div>
+<script>
+(function() {
+  function enterFullscreen() {
+    var el = document.documentElement;
+    var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+    if (req) { try { var p = req.call(el); if (p && p.catch) p.catch(function(){}); } catch(e){} }
+  }
+  // expõe globalmente para o onclick do botão
+  window.enterFullscreen = enterFullscreen;
+  // Entra em tela cheia no primeiro toque em qualquer lugar (não bloqueia o clique do card)
+  document.body.addEventListener('click', function onFirstTap() {
+    enterFullscreen();
+    document.body.removeEventListener('click', onFirstTap);
+  }, { once: true });
+})();
 </script>
 </body>
 </html>
