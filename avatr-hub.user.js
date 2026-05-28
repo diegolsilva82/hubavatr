@@ -3,6 +3,8 @@
 // @namespace    avatr-hub
 // @version      6.1
 // @description  Barra flutuante de navegação rápida (CSP safe)
+// @downloadURL  https://raw.githubusercontent.com/diegolsilva82/hubavatr/main/avatr-hub.user.js
+// @updateURL    https://raw.githubusercontent.com/diegolsilva82/hubavatr/main/avatr-hub.user.js
 // @match        *://www.youtube.com/*
 // @match        *://m.youtube.com/*
 // @match        *://music.youtube.com/*
