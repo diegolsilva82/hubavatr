@@ -1,18 +1,13 @@
 // ==UserScript==
 // @name         AVATR HUB - Barra Flutuante
 // @namespace    avatr-hub
-// @version      6.3
+// @version      6.4
 // @description  Barra flutuante de navegação rápida (CSP safe)
 // @downloadURL  https://raw.githubusercontent.com/diegolsilva82/hubavatr/main/avatr-hub.user.js
 // @updateURL    https://raw.githubusercontent.com/diegolsilva82/hubavatr/main/avatr-hub.user.js
 // @match        *://www.youtube.com/*
 // @match        *://m.youtube.com/*
 // @match        *://music.youtube.com/*
-// @match        *://www.itapema.com.br/*
-// @match        *://www.jovempan.com.br/*
-// @match        *://www.magiaonline.com.br/*
-// @match        *://www.radios.com.br/*
-// @match        *://diegolsilva82.github.io/hubavatr*
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
