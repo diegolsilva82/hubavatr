@@ -42,17 +42,17 @@
     z-index: 1;
     transform-origin: top center;
     width: 900px;
-    padding: 48px 24px 40px;
+    padding: 32px 24px 28px;
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  header { text-align: center; margin-bottom: 48px; }
+  header { text-align: center; margin-bottom: 28px; }
   .logo-dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#00c8ff; box-shadow:0 0 16px #00c8ff; margin-bottom:14px; animation:pulse 2s ease-in-out infinite; }
   header h1 { font-family:'Syne',sans-serif; font-size:3rem; font-weight:800; letter-spacing:-0.03em; background:linear-gradient(135deg,#fff 30%,rgba(255,255,255,0.4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
 
-  .section-label { font-family:'Syne',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:20px; padding-left:4px; }
+  .section-label { font-family:'Syne',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; padding-left:4px; }
   section { margin-bottom: 40px; }
 
   .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
@@ -215,22 +215,22 @@
     </div>
   </section>
 
-  <section>
+  <section style="margin-top:8px;">
     <div class="section-label">&#9658; Mapas</div>
-    <div class="grid-5">
-      <a class="card radio" href="waze://?favorites=yes" onclick="openWazeBrief(event);return false;" id="card-waze">
-        <div class="radio-logo" style="background:linear-gradient(135deg,#33ccff 0%,#00aaee 100%);display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
-          <svg width="60%" height="60%" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a class="card-mini" href="waze://?favorites=yes" onclick="openWazeBrief(event);return false;" id="card-waze" style="display:flex;flex-direction:row;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:8px 14px 8px 8px;text-decoration:none;color:inherit;cursor:pointer;backdrop-filter:blur(20px);transition:transform 0.15s,background 0.15s;">
+        <div style="background:linear-gradient(135deg,#33ccff 0%,#00aaee 100%);display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M32 6 C17 6 5 16 5 28 C5 37 12 44 22 47 L22 56 L31 49 C46 49 59 39 59 27 C59 15 47 6 32 6 Z" fill="white"/>
             <circle cx="22" cy="26" r="3" fill="#33ccff"/>
             <circle cx="42" cy="26" r="3" fill="#33ccff"/>
             <path d="M20 36 Q32 44 44 36" stroke="#33ccff" stroke-width="3" stroke-linecap="round" fill="none"/>
           </svg>
         </div>
-        <div class="card-label">Waze</div>
+        <div style="font-size:0.85rem;font-weight:500;">Waze</div>
       </a>
     </div>
-  </section>
+  </section
 
   <div class="player-section" id="playerSection">
     <div class="section-label">&#9658; Tocando agora</div>
