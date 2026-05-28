@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AVATR HUB - Barra Flutuante
 // @namespace    avatr-hub
-// @version      6.1
+// @version      6.2
 // @description  Barra flutuante de navegação rápida (CSP safe)
 // @downloadURL  https://raw.githubusercontent.com/diegolsilva82/hubavatr/main/avatr-hub.user.js
 // @updateURL    https://raw.githubusercontent.com/diegolsilva82/hubavatr/main/avatr-hub.user.js
@@ -67,36 +67,76 @@
     return null;
   }
 
+  const POSITIONS = ['top','bottom','left','right'];
+  const POS_LABELS = { top:'\u2191 Cima', bottom:'\u2193 Baixo', left:'\u2190 Esquerda', right:'Direita \u2192' };
+
+  function getPos() {
+    const p = localStorage.getItem('avatr-hub-pos') || 'right';
+    return POSITIONS.includes(p) ? p : 'right';
+  }
+
+  function hostStyleFor(pos) {
+    const base = 'all:initial;position:fixed;z-index:2147483647;display:block;pointer-events:auto;';
+    if (pos === 'top')    return base + 'top:0;left:0;right:0;width:100%;height:56px;';
+    if (pos === 'bottom') return base + 'bottom:0;left:0;right:0;width:100%;height:56px;';
+    if (pos === 'left')   return base + 'top:0;left:0;width:56px;height:100%;';
+    return base + 'top:0;right:0;width:56px;height:100%;'; // right
+  }
+
+  function applyMargin(pos) {
+    if (!document.body) return;
+    ['margin-top','margin-bottom','margin-left','margin-right'].forEach(m => document.body.style.removeProperty(m));
+    document.body.style.setProperty('margin-' + pos, '56px', 'important');
+  }
+
+  function setPos(pos) {
+    localStorage.setItem('avatr-hub-pos', pos);
+    const existing = document.getElementById(BAR_ID);
+    if (existing) existing.remove();
+    ['margin-top','margin-bottom','margin-left','margin-right'].forEach(m => document.body && document.body.style.removeProperty(m));
+    inject();
+  }
+
   function buildBar() {
     const activeId = getActiveId();
-    const orientation = localStorage.getItem('avatr-hub-pos') || 'right';
+    const pos = getPos();
+    const isVertical = (pos === 'left' || pos === 'right');
     const host = document.createElement('div');
     host.id = BAR_ID;
-    host.setAttribute('data-orientation', orientation);
-    if (orientation === 'bottom') {
-      host.setAttribute('style','all:initial;position:fixed;bottom:0;left:0;right:0;width:100%;height:56px;z-index:2147483647;display:block;pointer-events:auto');
-    } else {
-      host.setAttribute('style','all:initial;position:fixed;top:0;right:0;width:56px;height:100%;z-index:2147483647;display:block;pointer-events:auto');
-    }
+    host.setAttribute('data-pos', pos);
+    host.setAttribute('style', hostStyleFor(pos));
     const shadow = host.attachShadow({ mode:'open' });
     const styleEl = document.createElement('style');
     styleEl.textContent = `
       .bar{position:fixed;z-index:2147483647;display:flex;align-items:center;background:rgba(8,8,14,0.96);box-shadow:0 0 24px rgba(0,0,0,0.7);}
-      .bar.right{top:0;right:0;bottom:0;width:56px;flex-direction:column;justify-content:center;gap:10px;padding:16px 0;border-left:1px solid rgba(255,255,255,0.12);}
+      .bar.top{top:0;left:0;right:0;height:56px;flex-direction:row;justify-content:center;gap:10px;padding:0 16px;border-bottom:1px solid rgba(255,255,255,0.12);}
       .bar.bottom{bottom:0;left:0;right:0;height:56px;flex-direction:row;justify-content:center;gap:10px;padding:0 16px;border-top:1px solid rgba(255,255,255,0.12);}
+      .bar.left{top:0;left:0;bottom:0;width:56px;flex-direction:column;justify-content:center;gap:10px;padding:16px 0;border-right:1px solid rgba(255,255,255,0.12);}
+      .bar.right{top:0;right:0;bottom:0;width:56px;flex-direction:column;justify-content:center;gap:10px;padding:16px 0;border-left:1px solid rgba(255,255,255,0.12);}
       .btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;opacity:1;box-sizing:border-box;}
       .btn.active{outline:2px solid rgba(255,255,255,0.55);outline-offset:2px;}
       .btn img{width:34px;height:34px;border-radius:8px;object-fit:cover;display:block;}
       .sep{flex-shrink:0;background:rgba(255,255,255,0.18);border-radius:1px;}
-      .bar.right .sep{height:1px;width:28px;}
-      .bar.bottom .sep{width:1px;height:28px;}
-      .gear{margin-top:auto;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);transition:background 0.15s;}
+      .bar.vert .sep{height:1px;width:28px;}
+      .bar.horiz .sep{width:1px;height:28px;}
+      .gear{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);transition:background 0.15s;}
       .gear:hover{background:rgba(255,255,255,0.16);}
-      .bar.bottom .gear{margin-top:0;margin-left:auto;}
+      .bar.vert .gear{margin-top:auto;}
+      .bar.horiz .gear{margin-left:auto;}
+      .menu{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(18,18,26,0.98);border:1px solid rgba(255,255,255,0.18);border-radius:16px;padding:18px;box-shadow:0 8px 40px rgba(0,0,0,0.8);display:none;flex-direction:column;gap:10px;min-width:200px;}
+      .menu.open{display:flex;}
+      .menu-title{color:#fff;font-family:sans-serif;font-size:13px;font-weight:600;text-align:center;margin-bottom:4px;opacity:0.85;}
+      .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+      .menu-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-family:sans-serif;font-size:13px;padding:12px 8px;cursor:pointer;text-align:center;transition:background 0.15s;}
+      .menu-btn:hover{background:rgba(255,255,255,0.18);}
+      .menu-btn.sel{background:rgba(80,160,255,0.35);border-color:rgba(120,190,255,0.6);}
+      .menu-close{background:transparent;border:none;color:rgba(255,255,255,0.6);font-family:sans-serif;font-size:12px;cursor:pointer;padding:6px;margin-top:2px;}
+      .backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;}
+      .backdrop.open{display:block;}
     `;
     shadow.appendChild(styleEl);
     const bar = document.createElement('div');
-    bar.className = 'bar ' + orientation;
+    bar.className = 'bar ' + pos + ' ' + (isVertical ? 'vert' : 'horiz');
     SERVICES.forEach(s => {
       if (s.id === 'sep' || s.id === 'sep2') {
         const sep = document.createElement('div');
@@ -119,50 +159,56 @@
       bar.appendChild(btn);
     });
 
-    // Botao engrenagem para alternar posicao
+    // Engrenagem -> abre menu de posicao
     const gear = document.createElement('div');
     gear.className = 'btn gear';
-    gear.title = 'Alternar posicao (lateral / rodape)';
+    gear.title = 'Configurar posicao da barra';
     const gearSvg = document.createElementNS(SVG_NS, 'svg');
-    gearSvg.setAttribute('viewBox','0 0 24 24');
-    gearSvg.setAttribute('width','20');
-    gearSvg.setAttribute('height','20');
+    gearSvg.setAttribute('viewBox','0 0 24 24'); gearSvg.setAttribute('width','20'); gearSvg.setAttribute('height','20');
     const gearP = document.createElementNS(SVG_NS, 'path');
     gearP.setAttribute('fill','white');
-    gearP.setAttribute('d','M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z');
-    gearSvg.appendChild(gearP);
-    gear.appendChild(gearSvg);
-    gear.addEventListener('click', () => {
-      const curr = localStorage.getItem('avatr-hub-pos') || 'right';
-      localStorage.setItem('avatr-hub-pos', curr === 'right' ? 'bottom' : 'right');
-      const existing = document.getElementById(BAR_ID);
-      if (existing) existing.remove();
-      document.body.style.removeProperty('margin-right');
-      document.body.style.removeProperty('margin-bottom');
-      inject();
-    });
+    gearP.setAttribute('d','M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z');
+    gearSvg.appendChild(gearP); gear.appendChild(gearSvg);
     bar.appendChild(gear);
-
     shadow.appendChild(bar);
+
+    // Backdrop + menu de posicao
+    const backdrop = document.createElement('div');
+    backdrop.className = 'backdrop';
+    const menu = document.createElement('div');
+    menu.className = 'menu';
+    const mtitle = document.createElement('div');
+    mtitle.className = 'menu-title'; mtitle.textContent = 'Posicao da barra';
+    menu.appendChild(mtitle);
+    const grid = document.createElement('div');
+    grid.className = 'menu-grid';
+    POSITIONS.forEach(p => {
+      const mb = document.createElement('button');
+      mb.className = 'menu-btn' + (p === pos ? ' sel' : '');
+      mb.textContent = POS_LABELS[p];
+      mb.addEventListener('click', () => { setPos(p); });
+      grid.appendChild(mb);
+    });
+    menu.appendChild(grid);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'menu-close'; closeBtn.textContent = 'Fechar';
+    closeBtn.addEventListener('click', () => { menu.classList.remove('open'); backdrop.classList.remove('open'); });
+    menu.appendChild(closeBtn);
+    backdrop.addEventListener('click', () => { menu.classList.remove('open'); backdrop.classList.remove('open'); });
+    gear.addEventListener('click', () => { menu.classList.add('open'); backdrop.classList.add('open'); });
+    shadow.appendChild(backdrop);
+    shadow.appendChild(menu);
+
     return host;
   }
 
-    function inject() {
+  function inject() {
     if (document.getElementById(BAR_ID)) return;
     const root = document.documentElement || document.body;
     if (!root) return;
     root.appendChild(buildBar());
-    const orientation = localStorage.getItem('avatr-hub-pos') || 'right';
-    const nudge = () => {
-      if (!document.body) return;
-      if (orientation === 'bottom') {
-        document.body.style.removeProperty('margin-right');
-        document.body.style.setProperty('margin-bottom','56px','important');
-      } else {
-        document.body.style.removeProperty('margin-bottom');
-        document.body.style.setProperty('margin-right','56px','important');
-      }
-    };
+    const pos = getPos();
+    const nudge = () => applyMargin(pos);
     nudge(); setTimeout(nudge,500); setTimeout(nudge,1500);
   }
 
