@@ -153,6 +153,19 @@
   }
   .btn-fullscreen:active { background: rgba(255,255,255,0.2); }
   .btn-fullscreen svg { fill: rgba(255,255,255,0.6); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 24px;
+    margin-bottom: 18px;
+  }
+  .col-left, .col-right { display: flex; flex-direction: column; gap: 18px; }
+  .col-left .grid-2 { grid-template-columns: 1fr !important; gap: 12px; }
+  .col-right .grid-5 { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .col-right .card.radio { padding: 18px 8px 14px; }
+  .col-right .card.radio .radio-logo { width: 58px; height: 58px; }
+  .col-right .card.radio .card-label { font-size: 0.72rem; }
 </style>
 </head>
 <body>
@@ -163,7 +176,9 @@
     <h1>AVATR HUB</h1>
   </header>
 
-  <section>
+  <div class="two-col">
+    <div class="col-left">
+      <section>
     <div class="section-label">&#9658; Vídeo &amp; Música</div>
     <div class="grid-2">
       <a class="card card-big yt" href="https://www.youtube.com">
@@ -188,8 +203,25 @@
       </a>
     </div>
   </section>
-
-  <section>
+      <section style="margin-top:8px;">
+    <div class="section-label">&#9658; Mapas</div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a class="card-mini" href="waze://?favorites=yes" onclick="openWazeBrief(event);return false;" id="card-waze" style="display:flex;flex-direction:row;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:8px 14px 8px 8px;text-decoration:none;color:inherit;cursor:pointer;backdrop-filter:blur(20px);transition:transform 0.15s,background 0.15s;">
+        <div style="background:linear-gradient(135deg,#33ccff 0%,#00aaee 100%);display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 6 C17 6 5 16 5 28 C5 37 12 44 22 47 L22 56 L31 49 C46 49 59 39 59 27 C59 15 47 6 32 6 Z" fill="white"/>
+            <circle cx="22" cy="26" r="3" fill="#33ccff"/>
+            <circle cx="42" cy="26" r="3" fill="#33ccff"/>
+            <path d="M20 36 Q32 44 44 36" stroke="#33ccff" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div style="font-size:0.85rem;font-weight:500;">Waze</div>
+      </a>
+    </div>
+  </section>
+    </div>
+    <div class="col-right">
+      <section>
     <div class="section-label">&#9658; Rádios</div>
     <div class="grid-5">
       <div class="card radio" onclick="playRadio('itapema','Itapema FM','itapema')" id="card-itapema">
@@ -214,23 +246,8 @@
       </a>
     </div>
   </section>
-
-  <section style="margin-top:8px;">
-    <div class="section-label">&#9658; Mapas</div>
-    <div style="display:flex;gap:12px;align-items:center;">
-      <a class="card-mini" href="waze://?favorites=yes" onclick="openWazeBrief(event);return false;" id="card-waze" style="display:flex;flex-direction:row;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:8px 14px 8px 8px;text-decoration:none;color:inherit;cursor:pointer;backdrop-filter:blur(20px);transition:transform 0.15s,background 0.15s;">
-        <div style="background:linear-gradient(135deg,#33ccff 0%,#00aaee 100%);display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;flex-shrink:0;">
-          <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M32 6 C17 6 5 16 5 28 C5 37 12 44 22 47 L22 56 L31 49 C46 49 59 39 59 27 C59 15 47 6 32 6 Z" fill="white"/>
-            <circle cx="22" cy="26" r="3" fill="#33ccff"/>
-            <circle cx="42" cy="26" r="3" fill="#33ccff"/>
-            <path d="M20 36 Q32 44 44 36" stroke="#33ccff" stroke-width="3" stroke-linecap="round" fill="none"/>
-          </svg>
-        </div>
-        <div style="font-size:0.85rem;font-weight:500;">Waze</div>
-      </a>
     </div>
-  </section
+  </div>
 
   <div class="player-section" id="playerSection">
     <div class="section-label">&#9658; Tocando agora</div>
@@ -278,7 +295,7 @@ function applyScale() {
   const availH = window.innerHeight;
   const availW = window.innerWidth;
   const scaleH = availH / naturalH;
-  const scaleW = availW / 900;
+  const scaleW = availW / 1400;
   const scale = Math.min(scaleH, scaleW, 1);
   scaler.style.transform = 'scale(' + scale + ')';
   scaler.style.marginTop = scale < 1 ? -((naturalH * (1 - scale)) / 2) + 'px' : '0';
@@ -317,7 +334,7 @@ function showPlayer(id, name) {
   document.getElementById('playerName').textContent = name;
   document.getElementById('playerSection').classList.add('visible');
   // Hide header to free up space for player
-  document.querySelector('header').style.display = 'none';
+  // header permanece visivel
   setTimeout(applyScale, 50);
 }
 
